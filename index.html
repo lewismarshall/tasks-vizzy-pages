@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>tasks-vizzy</title>
+  <meta name="description" content="Personal utility that reads one Google Tasks list. Not a product. Not open for sign-ups.">
+  <style>
+    body { font: 18px/1.5 system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1.25rem; color: #111; }
+    h1, h2 { font-weight: 650; }
+    a { color: #0b57d0; }
+    .meta { color: #444; }
+  </style>
+</head>
+<body>
+  <h1>tasks-vizzy</h1>
+  <p><strong>tasks-vizzy</strong> is a small personal utility that reads one person's own Google Tasks list and passes tasks tagged with the word <em>Vizzy</em> to that person's own assistant.</p>
+  <p>It is not a product, not a service, and not open for sign-ups. It runs on one machine, for one Google account, operated by the person who built it.</p>
+
+  <h2>What it does</h2>
+  <ol>
+    <li>Every few minutes it asks the Google Tasks API for the tasks in the operator's default task list.</li>
+    <li>It selects the ones whose title or notes contain the word <em>Vizzy</em>.</li>
+    <li>It prints those tasks, on the operator's own machine, for their own assistant to act on.</li>
+    <li>It remembers which tasks it has already printed, so nothing is sent twice.</li>
+  </ol>
+  <p>That is the whole program.</p>
+
+  <h2>What it cannot do</h2>
+  <ul>
+    <li><strong>It cannot change anything.</strong> The only Google permission it holds is <code>https://www.googleapis.com/auth/tasks.readonly</code> — read-only access to Google Tasks. It cannot create, edit, complete or delete a task, and it asks for no other permission: no email, no calendar, no contacts, no files, no profile information.</li>
+    <li><strong>It cannot act for anyone else.</strong> It holds credentials for exactly one account, granted by that account's owner, stored on that owner's machine.</li>
+  </ul>
+
+  <h2>Who runs it</h2>
+  <p>One person, for themselves. Contact: <a href="mailto:lewis.rn.marshall@gmail.com">lewis.rn.marshall@gmail.com</a>.</p>
+
+  <h2>Privacy</h2>
+  <p>See the <a href="/privacy">privacy policy</a>. The short version: task data is read on the operator's own machine, is not sent anywhere else, and is never sold.</p>
+
+  <h2>Source</h2>
+  <p>The source is a private repository. It is not distributed, and there is nothing to install.</p>
+</body>
+</html>
