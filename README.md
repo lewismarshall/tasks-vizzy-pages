@@ -14,7 +14,7 @@ Not the app binaries. App repos stay private:
 | `/privacy` | tasks-vizzy privacy policy |
 | `/tasks-write/` | **tasks-write** homepage (write CLI branding — distinct from vizzy) |
 | `/tasks-write/privacy` | **tasks-write** privacy policy |
-| `/oauth/tasks-write` | HTTPS OAuth bounce for tasks-write (auth code → localhost CLI; never stores tokens) |
+| `/oauth/tasks-write` | HTTPS OAuth bounce for tasks-write (`fetch` to localhost CLI; never redirects browser to http; never stores tokens) |
 
 Google Auth Platform for project **tasks-write** must use the `/tasks-write/`
 home and privacy URLs — not the vizzy marketing pages. The authorised redirect

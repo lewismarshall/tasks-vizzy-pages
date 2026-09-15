@@ -32,7 +32,7 @@
     <li>an OAuth token (write-scope), so the CLI does not have to ask for permission on every run;</li>
     <li>the operator’s own email address, as a local note of which account was authorised.</li>
   </ul>
-  <p>Nothing is stored on the static HTTPS host used for OAuth branding and the auth-code bounce page. That host never receives access or refresh tokens — only a short-lived authorisation code that is immediately redirected to the local CLI.</p>
+  <p>Nothing is stored on the static HTTPS host used for OAuth branding and the auth-code bounce page. That host never receives access or refresh tokens — only a short-lived authorisation code that the page delivers to the local CLI via <code>fetch</code> (the browser stays on HTTPS).</p>
 
   <h2>What it does not do</h2>
   <ul>

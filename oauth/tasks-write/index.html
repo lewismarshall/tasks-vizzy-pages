@@ -7,9 +7,10 @@
   <style>
     body { font: 16px/1.5 system-ui, sans-serif; max-width: 36rem; margin: 2rem auto; padding: 0 1.25rem; color: #111; }
     h1 { font-size: 1.25rem; font-weight: 650; }
-    code { font-size: 0.9em; }
+    code { font-size: 0.9em; word-break: break-all; }
     .err { color: #b00020; }
     .ok { color: #0b57d0; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.85em; }
   </style>
 </head>
 <body>
@@ -26,11 +27,19 @@
     msg.innerHTML = "<strong>" + title + "</strong><br>" + (detail || "");
   }
 
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
   if (err) {
     var desc = params.get("error_description") || "";
     showError(
       "Google OAuth error: " + err,
-      (desc ? desc + "<br>" : "") +
+      (desc ? escapeHtml(desc) + "<br>" : "") +
         "Close this tab and re-run <code>python -m tasks_write auth</code>."
     );
     return;
@@ -60,19 +69,48 @@
 
   var port = parseInt(parts[1], 10);
   if (!Number.isFinite(port) || port < 1 || port > 65535) {
-    showError("Invalid localhost port in OAuth state", "state=" + state);
+    showError("Invalid localhost port in OAuth state", "state=" + escapeHtml(state));
     return;
   }
 
   var qs = window.location.search; // includes leading ?
-  var target = "http://127.0.0.1:" + port + "/" + qs;
   msg.className = "ok";
-  msg.textContent = "Redirecting to local CLI listener on port " + port + "…";
-  window.location.replace(target);
+  msg.textContent = "Calling local CLI listener on port " + port + "…";
+
+  // Stay on this HTTPS page — never navigate the browser to http://127.0.0.1
+  // (Chrome flags that as an unsafe address). Deliver the code via fetch.
+  fetch("http://127.0.0.1:" + port + "/" + qs, {
+    method: "GET",
+    mode: "cors",
+    credentials: "omit",
+  })
+    .then(function (resp) {
+      if (!resp.ok) {
+        return resp.json().catch(function () { return {}; }).then(function (body) {
+          var detail = (body && body.error) ? String(body.error) : ("HTTP " + resp.status);
+          throw new Error(detail);
+        });
+      }
+      msg.className = "ok";
+      msg.textContent = "Authorised — you can close this tab";
+    })
+    .catch(function (e) {
+      var reason = (e && e.message) ? e.message : String(e);
+      showError(
+        "Could not reach the local CLI listener",
+        "The HTTPS bounce page called <code>http://127.0.0.1:" + port + "/</code> " +
+          "via fetch (no browser redirect). " +
+          "Is <code>python -m tasks_write auth</code> still waiting?<br>" +
+          "Error: " + escapeHtml(reason) + "<br><br>" +
+          "Manual recovery — paste this authorisation code into the waiting CLI " +
+          "only if it asks, otherwise re-run auth:<br>" +
+          "<span class=\"mono\">" + escapeHtml(code) + "</span>"
+      );
+    });
 })();
   </script>
   <noscript>
-    <p class="err">JavaScript is required to bounce the OAuth code to the local CLI.</p>
+    <p class="err">JavaScript is required to deliver the OAuth code to the local CLI via fetch.</p>
   </noscript>
 </body>
 </html>
