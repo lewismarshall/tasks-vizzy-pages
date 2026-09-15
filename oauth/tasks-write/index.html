@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>tasks-write OAuth callback</title>
+  <style>
+    body { font: 16px/1.5 system-ui, sans-serif; max-width: 36rem; margin: 2rem auto; padding: 0 1.25rem; color: #111; }
+    h1 { font-size: 1.25rem; font-weight: 650; }
+    code { font-size: 0.9em; }
+    .err { color: #b00020; }
+    .ok { color: #0b57d0; }
+  </style>
+</head>
+<body>
+  <h1>tasks-write</h1>
+  <p id="msg">Finishing Google sign-in…</p>
+  <script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var err = params.get("error");
+  var msg = document.getElementById("msg");
+
+  function showError(title, detail) {
+    msg.className = "err";
+    msg.innerHTML = "<strong>" + title + "</strong><br>" + (detail || "");
+  }
+
+  if (err) {
+    var desc = params.get("error_description") || "";
+    showError(
+      "Google OAuth error: " + err,
+      (desc ? desc + "<br>" : "") +
+        "Close this tab and re-run <code>python -m tasks_write auth</code>."
+    );
+    return;
+  }
+
+  var code = params.get("code");
+  var state = params.get("state") || "";
+  if (!code) {
+    showError(
+      "Missing authorisation code",
+      "This page is only a bounce target for the tasks-write CLI. " +
+        "Start auth with <code>python -m tasks_write auth</code>."
+    );
+    return;
+  }
+
+  // state = tw1.<port>.<csrf>
+  var parts = state.split(".");
+  if (parts.length < 3 || parts[0] !== "tw1") {
+    showError(
+      "Invalid OAuth state",
+      "Expected state prefix <code>tw1.&lt;port&gt;.&lt;csrf&gt;</code>. " +
+        "Re-run <code>python -m tasks_write auth</code>."
+    );
+    return;
+  }
+
+  var port = parseInt(parts[1], 10);
+  if (!Number.isFinite(port) || port < 1 || port > 65535) {
+    showError("Invalid localhost port in OAuth state", "state=" + state);
+    return;
+  }
+
+  var qs = window.location.search; // includes leading ?
+  var target = "http://127.0.0.1:" + port + "/" + qs;
+  msg.className = "ok";
+  msg.textContent = "Redirecting to local CLI listener on port " + port + "…";
+  window.location.replace(target);
+})();
+  </script>
+  <noscript>
+    <p class="err">JavaScript is required to bounce the OAuth code to the local CLI.</p>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>tasks-write</title>
+  <meta name="description" content="Personal CLI that completes Google Tasks on one account. Separate from the tasks-vizzy readonly poller.">
+  <style>
+    body { font: 18px/1.5 system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1.25rem; color: #111; }
+    h1, h2 { font-weight: 650; }
+    a { color: #0b57d0; }
+    code { font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <h1>tasks-write</h1>
+  <p><strong>tasks-write</strong> is a small personal command-line tool that can mark the operator’s own Google Tasks as completed, fetch a task, and list task lists.</p>
+  <p>It is not a product, not a service, and not open for sign-ups. It runs on one machine, for one Google account, operated by the person who built it.</p>
+
+  <h2>Separate from tasks-vizzy</h2>
+  <p><strong>tasks-write</strong> is a different app from <a href="/">tasks-vizzy</a>. Vizzy only reads tasks (readonly poller). This tool can change task status. They use separate OAuth clients, separate tokens, and must not share a single Google grant.</p>
+
+  <h2>What it does</h2>
+  <ol>
+    <li>The operator runs a local CLI (<code>python -m tasks_write …</code>).</li>
+    <li>With permission, it calls the Google Tasks API to complete or inspect tasks on that same account.</li>
+    <li>Results are printed on the operator’s own machine for their own assistant software.</li>
+  </ol>
+
+  <h2>What it cannot do</h2>
+  <ul>
+    <li><strong>It cannot act for anyone else.</strong> Credentials are for exactly one account, granted by that account’s owner, stored only on that owner’s machine.</li>
+    <li><strong>It does not expand the vizzy poller’s scopes.</strong> Write access lives only in this app’s token.</li>
+  </ul>
+
+  <h2>Who runs it</h2>
+  <p>One person, for themselves. Contact: <a href="mailto:lewis.rn.marshall@gmail.com">lewis.rn.marshall@gmail.com</a>.</p>
+
+  <h2>Privacy</h2>
+  <p>See the <a href="/tasks-write/privacy">tasks-write privacy policy</a>.</p>
+</body>
+</html>
